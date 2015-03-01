@@ -13,16 +13,31 @@ public class Game extends JPanel
 {
 	public Player[] players;
 
+	public Platform floor;
+
 	private JFrame frame;
+
+	public int centerX = 0;
+	public int centerY = 0;
+
+	public int x(int gameX)
+	{
+		return centerX + gameX;
+	}
+	public int y(int gameY)
+	{
+		return centerY - gameY;
+	}
 
 	public Game()
 	{
 		players = new Player[2];
-		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN);
+		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_SPACE);
 		players[0] = new Player(this, keyboard1);
-		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S);
+		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_Z);
 		players[1] = new Player(this, keyboard2);
 
+		floor = new Platform(this);
 
 		frame = new JFrame();
 		frame.getContentPane().add(this);
@@ -33,6 +48,10 @@ public class Game extends JPanel
 		addKeyListener(keyboard1);
 		addKeyListener(keyboard2);
 		setFocusable(true);
+
+		// get origin
+		centerX = frame.getSize().width / 2;
+		centerY = frame.getSize().height / 2;
 	}
 
 	public void update()
@@ -49,25 +68,19 @@ public class Game extends JPanel
 			for (Player opponent : players)
 			{ // check player with each of opponent's hitboxes
 				if (player == opponent) continue;
-				for (Hitbox hitbox : opponent.hitboxes)
+				Hitbox hitbox = opponent.hitbox;
+				if (hitbox == null) continue;
+				if (hitbox.isActive() == false) continue;
+				if (hitbox.touching(player))
 				{
-					if (hitbox.active == 0) continue;
-					if (hitbox.touching(player))
-					{
-						// damage
-						player.damage += 10;
-						// knockback (away from hitbox)
-						float knockback = 0.1f;
-						float dx = player.x - hitbox.x;
-						float dy = player.y - hitbox.y;
-						float r = (float)Math.sqrt(dx*dx + dy*dy);
-						dx /= r;
-						dy /= r;
-						player.kbx = dx * player.damage * knockback;
-						player.kby = dy * player.damage * knockback;
-						// turn off hitbox
-						hitbox.active = 0;
-					}
+					// damage
+					player.damage += hitbox.damage;
+					// knockback (away from hitbox)
+					float knockback = 0.1f;
+					player.kbx = hitbox.trajectoryX(player) * player.damage * knockback;
+					player.kby = hitbox.trajectoryY(player) * player.damage * knockback;
+					// turn off hitbox
+					hitbox.deactivate();
 				}
 			}
 			System.out.print(player.damage + " ");
@@ -86,6 +99,10 @@ public class Game extends JPanel
 		int width = frame.getSize().width;
 		int height = frame.getSize().height;
 
+		// update origin
+		centerX = frame.getSize().width / 2;
+		centerY = frame.getSize().height / 2;
+
 		// draw
 		// players
 		for (Player player : players)
@@ -93,10 +110,7 @@ public class Game extends JPanel
 			player.draw(graphics);
 		}
 		// floor
-		int floorWidth = 800;
-		int floorHeight = 50;
-		graphics.drawRect(400, 600, 800, 50);
-//		graphics.drawRect(width / 2 - floorWidth / 2, height / 2 - floorHeight / 2, floorWidth, floorHeight);
+		floor.draw(graphics);
 	}
 }
 

@@ -7,35 +7,40 @@ public class Keyboard extends Controller implements KeyListener
 	private boolean leftKey;
 	private boolean jumpKey;
 	private boolean a1Key;
+	private boolean a2Key;
 
 	private int rightCode;
 	private int leftCode;
 	private int jumpCode;
 	private int a1Code;
+	private int a2Code;
 
-	public Keyboard(int rightCode, int leftCode, int jumpCode, int a1Code)
+	public Keyboard(int rightCode, int leftCode, int jumpCode, int a1Code, int a2Code)
 	{
 		this.rightCode = rightCode;
 		this.leftCode = leftCode;
 		this.jumpCode = jumpCode;
 		this.a1Code = a1Code;
+		this.a2Code = a2Code;
 
 		rightKey = false;
 		leftKey = false;
 		jumpKey = false;
 		a1Key = false;
+		a2Key = false;
 	}
 
 	private void update()
 	{
 		jump = jumpKey;
+
 		if (rightKey && !leftKey) direction = 1;
 		else if (leftKey && !rightKey) direction = -1;
 		else direction = 0;
-		if (a1Key)
-			attack = 1;
-		else
-			attack = 0;
+	
+		if (a1Key) attack = 1;
+		else if (a2Key) attack = 2;
+		else attack = 0;
 	}
 
 	@Override
@@ -49,6 +54,7 @@ public class Keyboard extends Controller implements KeyListener
 		if (code == leftCode) leftKey = true;
 		if (code == jumpCode) jumpKey = true;
 		if (code == a1Code) a1Key = true;
+		if (code == a2Code) a2Key = true;
 		update();
 	}
 
@@ -60,6 +66,7 @@ public class Keyboard extends Controller implements KeyListener
 		if (code == leftCode) leftKey = false;
 		if (code == jumpCode) jumpKey = false;
 		if (code == a1Code) a1Key = false;
+		if (code == a2Code) a2Key = false;
 		update();
 	}
 }

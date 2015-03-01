@@ -3,20 +3,21 @@ import java.awt.Graphics2D;
 
 public class Player
 {
+	public static int radius = 20;
+
 	public int x;
 	public int y;
 	public float kbx; // knockback
 	public float kby;
-	public boolean direction;
 
 	public int damage;
 
 	public float moveX; // voluntary movement
 	public float moveY;
 
-	public Hitbox hitboxes[];
+	public Hitbox hitbox = null;
 
-	private Game context;
+	public Game context;
 	private Controller controller;
 
 	public Player(Game context, Controller controller)
@@ -24,35 +25,42 @@ public class Player
 		this.context = context;
 		this.controller = controller;
 
-		x = 800;
-		y = 0;
+		x = 0;
+		y = 400;
 		kbx = 0;
 		kby = 0;
-		direction = false;
 		damage = 0;
 		moveX = 0;
 		moveY = 0;
-		hitboxes = new Hitbox[1];
-		hitboxes[0] = new Hitbox(x, y, 40);
 	}
 
 	public void update()
 	{
 		// act
-		switch (controller.direction)
+		if (hitbox == null) // can only act if not attacking
 		{
-			case -1: moveX = -7; break;
-			case 0: moveX = 0; break;
-			case 1: moveX = 7; break;
+			switch (controller.direction)
+			{
+				case -1: moveX = -7; break;
+				case 0: moveX = 0; break;
+				case 1: moveX = 7; break;
+			}
+			if (controller.jump && context.floor.touching(x, y - 1, radius) && y > context.floor.y)
+				moveY = 8;
+			switch (controller.attack)
+			{
+				case 0: break;
+				case 1: // body hitbox
+					hitbox = new Hitbox(0, 0, true, 0, 0, 30, 5, 10, 12, 10, this);
+					break;
+				case 2: // projectile hitbox
+					hitbox = new Hitbox(x + 25, y, false, 15, 0, 10, 5, 50, 0, 5, this);
+					break;
+			}
 		}
-		if (controller.jump && x > 400 && x < 1200 && y + 40 < 610 && y + 40 > 590)
-			moveY = -8;
-		switch (controller.attack)
+		else // if attacking, then stop actions
 		{
-			case 0: break;
-			case 1: // body hitbox
-				hitboxes[0].active = 20;
-				break;
+			moveX = 0;
 		}
 
 		// decrease knockback
@@ -65,13 +73,14 @@ public class Player
 		}
 
 		// fall
-		moveY += .3f; // only affects jumping
+		moveY -= .3f; // only affects jumping
 
 		float vx = kbx + moveX;
 		float vy = kby + moveY;
 
 		// check for floor
-		if (x > 400 && x < 1200 && vy > 0 && y + vy + 40 > 600 && y + vy - 40 < 650)
+		Platform f = context.floor;
+		if (vy < 0 && f.touching(x + (int)vx, y + (int)vy, radius))
 		{
 			moveY = 0;
 			kby = 0;
@@ -81,19 +90,20 @@ public class Player
 		x += vx;
 		y += vy;
 
-		// update hitboxes
-		hitboxes[0].set(x, y);
-		for (Hitbox hitbox : hitboxes)
-			if (hitbox.active > 0)
-				hitbox.active--;
+		// update hitbox
+		if (hitbox != null)
+		{
+			hitbox.update();
+			if (hitbox.state == -1)
+				hitbox = null;
+		}
 	}
 
 	public void draw(Graphics2D graphics)
 	{
-		graphics.drawOval(x, y, 40, 40);
-		for (Hitbox hitbox : hitboxes)
-			if (hitbox.active > 0)
-				hitbox.draw(graphics);
+		graphics.drawOval(context.x(x - radius), context.y(y + radius), 2*radius, 2*radius);
+		if (hitbox != null && hitbox.isActive())
+			hitbox.draw(graphics);
 	}
 }
 
