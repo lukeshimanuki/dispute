@@ -42,7 +42,7 @@ public class Game extends JPanel
 		// load images
 		spritePlayer = new Sprite("player.png", 40, 40, 20, 20);
 		spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
-		spriteBackground = new Sprite("background.png", 1920, 1080, 0, 0);
+		spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
 		spriteA1 = new Sprite("a1.png", 60, 60, 30, 30);
 		spriteA2 = new Sprite("a2.png", 30, 30, 15, 15);
 		spriteA3 = new Sprite("a3.png", 30, 30, 15, 15);
@@ -50,9 +50,9 @@ public class Game extends JPanel
 
 		// set up players
 		players = new Player[2];
-		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE);
+		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE, KeyEvent.VK_M);
 		players[0] = new Player(this, keyboard1, spritePlayer);
-		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z);
+		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
 		players[1] = new Player(this, keyboard2, spritePlayer);
 
 		floor = new Platform(spriteStage, this);
@@ -121,7 +121,7 @@ public class Game extends JPanel
 
 		// draw
 		// background
-		spriteBackground.draw(graphics, 0, 0);
+		spriteBackground.draw(graphics, centerX, centerY);
 		// players
 		for (Player player : players)
 		{

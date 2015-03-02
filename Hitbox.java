@@ -53,6 +53,15 @@ public class Hitbox
 		if (state > startup + active) // if ended
 			state = -1;
 
+		if (state == startup) // just became active
+		{ // so set its initial position if not relative
+			if (!relative)
+			{
+				x += player.x;
+				y += player.y;
+			}
+		}
+
 		if (isActive())
 		{
 			if (fall)
@@ -72,10 +81,7 @@ public class Hitbox
 	}
 	public boolean isActive()
 	{
-		if (state > startup && state < startup + active)
-			return true;
-		else
-			return false;
+		return state > startup && state < startup + active;
 	}
 
 	public void activate()

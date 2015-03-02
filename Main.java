@@ -14,8 +14,8 @@ public class Main
 		while (true)
 		{
 			game.update();
-					game.repaint();
-					Thread.sleep(10);
+			game.repaint();
+			Thread.sleep(10);
 		}
 	}
 }

@@ -15,7 +15,7 @@ public class Player
 	public float moveX; // voluntary movement
 	public float moveY;
 
-	private boolean hasJumped = false;
+	private boolean freefall = false;
 
 	public Hitbox hitbox = null;
 
@@ -41,36 +41,45 @@ public class Player
 	public void update()
 	{
 		// act
-		if (hitbox == null || hitbox.state > hitbox.endlag) // can't move (on ground) or jump while attacking
+		if (context.floor.touching(x, y, radius))
+			freefall = false;
+		if (!freefall) // can't do anything but move in free fall
 		{
-			// jump
-			if (controller.jump && context.floor.touching(x, y - 1, radius) && y > context.floor.y)
-				moveY = 16;
-		}
-		if (hitbox == null) // can't attack while any hitbox is out
-		{
-			// attack
-			switch (controller.attack)
+			if (hitbox == null || hitbox.state > hitbox.endlag) // can't move (on ground) or jump while attacking
 			{
-				case 0: break;
-				case 1: // body hitbox
-					hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 5, 10, 20, 10, context.spriteA1, this);
-					break;
-				case 2: // right projectile hitbox
-					hitbox = new Hitbox(x + 25, y, false, 10, 0, false, 15, 5, 50, 20, 5, context.spriteA2, this);
-					break;
-				case 3: // left projectile hitbox
-					hitbox = new Hitbox(x - 25, y, false, -10, 0, false, 15, 5, 50, 20, 5, context.spriteA3, this);
-					break;
-				case 4: // bomb hitbox
-					hitbox = new Hitbox(x, y + 25, false, 0, 10, true, 15, 5, 70, 20, 15, context.spriteA4, this);
-					break;
+				// jump
+				if (controller.jump && context.floor.touching(x, y, radius))
+					moveY = 16;
 			}
+			if (hitbox == null) // can't attack while any hitbox is out
+			{
+				// attack
+				switch (controller.attack)
+				{
+					case 0: break;
+					case 1: // body hitbox
+						hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 5, 10, 20, 10, context.spriteA1, this);
+						break;
+					case 2: // right projectile hitbox
+						hitbox = new Hitbox(25, 0, false, 10, 0, false, 15, 5, 50, 20, 5, context.spriteA2, this);
+						break;
+					case 3: // left projectile hitbox
+						hitbox = new Hitbox(25, 0, false, -10, 0, false, 15, 5, 50, 20, 5, context.spriteA3, this);
+						break;
+					case 4: // bomb hitbox
+						hitbox = new Hitbox(0, 25, false, 0, 10, true, 15, 5, 70, 20, 15, context.spriteA4, this);
+						break;
+					case 5: // recovery
+						moveY = 24;
+						freefall = true;
+						break;
+				}
+			}
+			else // if attacking, stop moving (on the ground)
+				moveX = 0;
 		}
-		else // if attacking, stop moving (on the ground)
-			moveX = 0;
 		// move (if either in air or not attacking)
-		if (hitbox == null || hitbox.state > hitbox.endlag || !context.floor.touching(x, y - 1, radius) || y < context.floor.y)
+		if (hitbox == null || hitbox.state > hitbox.endlag || !context.floor.touching(x, y, radius))
 		{
 			switch (controller.direction)
 			{
@@ -97,7 +106,7 @@ public class Player
 
 		// check for floor
 		Platform f = context.floor;
-		if (vy < 0 && f.touching(x + (int)vx, y + (int)vy, radius))
+		if (vy < 0 && f.through(x, y, radius, vy))
 		{
 			moveY = 0;
 			kby = 0;
@@ -113,6 +122,18 @@ public class Player
 			hitbox.update();
 			if (hitbox.state == -1)
 				hitbox = null;
+		}
+
+		// process ko
+		if (y < -800)
+		{
+			x = 0;
+			y = 400;
+			moveY = 0;
+			moveX = 0;
+			kby = 0;
+			kbx = 0;
+			damage = 0;
 		}
 	}
 
