@@ -5,8 +5,9 @@ public class Hitbox
 {
 	public int x;
 	public int y;
-	public int vx;
-	public int vy;
+	public float vx;
+	public float vy;
+	public boolean fall;
 	public int r;
 	public boolean relative;
 
@@ -15,21 +16,23 @@ public class Hitbox
 
 	private int startup;
 	private int active;
-	private int endlag;
+	public int endlag; // how long player waits after starting attack
 	public int state = 0;
 
 	public int damage;
 
 	private Player player;
 	private Game context;
+	private Sprite sprite;
 
-	public Hitbox(int x, int y, boolean relative, int vx, int vy, int r, int startup, int active, int endlag, int damage, Player player)
+	public Hitbox(int x, int y, boolean relative, float vx, float vy, boolean fall, int r, int startup, int active, int endlag, int damage, Sprite sprite, Player player)
 	{
 		this.x = x;
 		this.y = y;
 		this.relative = relative;
 		this.vx = vx;
 		this.vy = vy;
+		this.fall = fall;
 		this.r = r;
 
 		this.startup = startup;
@@ -40,17 +43,21 @@ public class Hitbox
 
 		this.player = player;
 		this.context = player.context;
+		this.sprite = sprite;
 	}
 
 	public void update()
 	{
 		if (state != -1) // if started
 			state++;
-		if (state > startup + active + endlag) // if ended
+		if (state > startup + active) // if ended
 			state = -1;
 
 		if (isActive())
 		{
+			if (fall)
+				vy -= .3f;
+
 			x += vx;
 			y += vy;
 
@@ -103,7 +110,7 @@ public class Hitbox
 
 	public void draw(Graphics2D graphics)
 	{
-		graphics.fillOval(context.x(ax - r), context.y(ay + r), 2*r, 2*r);
+		sprite.draw(graphics, context.x(ax), context.y(ay));
 	}
 }
 

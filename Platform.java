@@ -9,9 +9,11 @@ public class Platform
 	public int height = 50;
 
 	private Game context;
+	private Sprite sprite;
 
-	public Platform(Game context)
+	public Platform(Sprite sprite, Game context)
 	{
+		this.sprite = sprite;
 		this.context = context;
 	}
 
@@ -22,6 +24,6 @@ public class Platform
 
 	public void draw(Graphics2D graphics)
 	{
-		graphics.drawRect(context.x(x - width/2), context.y(y), width, height);
+		sprite.draw(graphics, context.x(x), context.y(y));
 	}
 }

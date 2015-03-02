@@ -15,15 +15,19 @@ public class Player
 	public float moveX; // voluntary movement
 	public float moveY;
 
+	private boolean hasJumped = false;
+
 	public Hitbox hitbox = null;
 
 	public Game context;
 	private Controller controller;
+	private Sprite sprite;
 
-	public Player(Game context, Controller controller)
+	public Player(Game context, Controller controller, Sprite sprite)
 	{
 		this.context = context;
 		this.controller = controller;
+		this.sprite = sprite;
 
 		x = 0;
 		y = 400;
@@ -37,7 +41,36 @@ public class Player
 	public void update()
 	{
 		// act
-		if (hitbox == null) // can only act if not attacking
+		if (hitbox == null || hitbox.state > hitbox.endlag) // can't move (on ground) or jump while attacking
+		{
+			// jump
+			if (controller.jump && context.floor.touching(x, y - 1, radius) && y > context.floor.y)
+				moveY = 16;
+		}
+		if (hitbox == null) // can't attack while any hitbox is out
+		{
+			// attack
+			switch (controller.attack)
+			{
+				case 0: break;
+				case 1: // body hitbox
+					hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 5, 10, 20, 10, context.spriteA1, this);
+					break;
+				case 2: // right projectile hitbox
+					hitbox = new Hitbox(x + 25, y, false, 10, 0, false, 15, 5, 50, 20, 5, context.spriteA2, this);
+					break;
+				case 3: // left projectile hitbox
+					hitbox = new Hitbox(x - 25, y, false, -10, 0, false, 15, 5, 50, 20, 5, context.spriteA3, this);
+					break;
+				case 4: // bomb hitbox
+					hitbox = new Hitbox(x, y + 25, false, 0, 10, true, 15, 5, 70, 20, 15, context.spriteA4, this);
+					break;
+			}
+		}
+		else // if attacking, stop moving (on the ground)
+			moveX = 0;
+		// move (if either in air or not attacking)
+		if (hitbox == null || hitbox.state > hitbox.endlag || !context.floor.touching(x, y - 1, radius) || y < context.floor.y)
 		{
 			switch (controller.direction)
 			{
@@ -45,22 +78,6 @@ public class Player
 				case 0: moveX = 0; break;
 				case 1: moveX = 7; break;
 			}
-			if (controller.jump && context.floor.touching(x, y - 1, radius) && y > context.floor.y)
-				moveY = 8;
-			switch (controller.attack)
-			{
-				case 0: break;
-				case 1: // body hitbox
-					hitbox = new Hitbox(0, 0, true, 0, 0, 30, 5, 10, 12, 10, this);
-					break;
-				case 2: // projectile hitbox
-					hitbox = new Hitbox(x + 25, y, false, 15, 0, 10, 5, 50, 0, 5, this);
-					break;
-			}
-		}
-		else // if attacking, then stop actions
-		{
-			moveX = 0;
 		}
 
 		// decrease knockback
@@ -73,7 +90,7 @@ public class Player
 		}
 
 		// fall
-		moveY -= .3f; // only affects jumping
+		moveY -= .65f; // only affects jumping
 
 		float vx = kbx + moveX;
 		float vy = kby + moveY;
@@ -101,7 +118,7 @@ public class Player
 
 	public void draw(Graphics2D graphics)
 	{
-		graphics.drawOval(context.x(x - radius), context.y(y + radius), 2*radius, 2*radius);
+		sprite.draw(graphics, context.x(x), context.y(y));
 		if (hitbox != null && hitbox.isActive())
 			hitbox.draw(graphics);
 	}
