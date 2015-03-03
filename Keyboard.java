@@ -42,7 +42,8 @@ public class Keyboard extends Controller implements KeyListener
 		a5Key = false;
 	}
 
-	private void update()
+	@Override
+	public void update()
 	{
 		jump = jumpKey;
 
@@ -73,7 +74,6 @@ public class Keyboard extends Controller implements KeyListener
 		if (code == a3Code) a3Key = true;
 		if (code == a4Code) a4Key = true;
 		if (code == a5Code) a5Key = true;
-		update();
 	}
 
 	@Override
@@ -88,7 +88,6 @@ public class Keyboard extends Controller implements KeyListener
 		if (code == a3Code) a3Key = false;
 		if (code == a4Code) a4Key = false;
 		if (code == a5Code) a5Key = false;
-		update();
 	}
 }
 

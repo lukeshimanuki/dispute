@@ -15,7 +15,7 @@ public class Game extends JPanel
 
 	public Platform floor;
 
-	private JFrame frame;
+	public JFrame frame;
 
 	public int centerX = 0;
 	public int centerY = 0;
@@ -52,8 +52,11 @@ public class Game extends JPanel
 		players = new Player[2];
 		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE, KeyEvent.VK_M);
 		players[0] = new Player(this, keyboard1, spritePlayer);
-		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
-		players[1] = new Player(this, keyboard2, spritePlayer);
+//		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
+//		Computer computer = new Computer((String)null);
+		Computer computer = new Computer("weights");
+		players[1] = new Player(this, computer, spritePlayer);
+		computer.set(players[1], players[0]);
 
 		floor = new Platform(spriteStage, this);
 
@@ -64,12 +67,50 @@ public class Game extends JPanel
 
 		// set up key listener
 		addKeyListener(keyboard1);
-		addKeyListener(keyboard2);
+//		addKeyListener(keyboard2);
 		setFocusable(true);
 
 		// get origin
 		centerX = frame.getSize().width / 2;
 		centerY = frame.getSize().height / 2;
+	}
+
+	public Game(Computer c1, Computer c2, boolean useGraphics) // for training
+	{
+		if (useGraphics)
+		{
+			// load images
+			spritePlayer = new Sprite("player.png", 40, 40, 20, 20);
+			spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
+			spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
+			spriteA1 = new Sprite("a1.png", 60, 60, 30, 30);
+			spriteA2 = new Sprite("a2.png", 30, 30, 15, 15);
+			spriteA3 = new Sprite("a3.png", 30, 30, 15, 15);
+			spriteA4 = new Sprite("a4.png", 30, 30, 15, 15);
+		}
+		// set up players
+		players = new Player[2];
+		players[0] = new Player(this, c1, spritePlayer);
+		players[1] = new Player(this, c2, spritePlayer);
+		c1.set(players[0], players[0]);
+		c2.set(players[1], players[0]);
+
+		floor = new Platform(spriteStage, this);
+
+		// set up graphics
+		if (useGraphics)
+		{
+			frame = new JFrame();
+			frame.getContentPane().add(this);
+			frame.setSize(300, 200);
+			frame.setVisible(true);
+
+			setFocusable(true);
+
+			// get origin
+			centerX = frame.getSize().width / 2;
+			centerY = frame.getSize().height / 2;
+		}
 	}
 
 	public void update()

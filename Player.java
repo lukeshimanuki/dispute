@@ -11,6 +11,7 @@ public class Player
 	public float kby;
 
 	public int damage;
+	public int lives = 5;
 
 	public float moveX; // voluntary movement
 	public float moveY;
@@ -30,7 +31,7 @@ public class Player
 		this.sprite = sprite;
 
 		x = 0;
-		y = 400;
+		y = 100;
 		kbx = 0;
 		kby = 0;
 		damage = 0;
@@ -40,6 +41,8 @@ public class Player
 
 	public void update()
 	{
+		controller.update();
+
 		// act
 		if (context.floor.touching(x, y, radius))
 			freefall = false;
@@ -49,7 +52,7 @@ public class Player
 			{
 				// jump
 				if (controller.jump && context.floor.touching(x, y, radius))
-					moveY = 16;
+					moveY = 22;
 			}
 			if (hitbox == null) // can't attack while any hitbox is out
 			{
@@ -58,19 +61,19 @@ public class Player
 				{
 					case 0: break;
 					case 1: // body hitbox
-						hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 5, 10, 20, 10, context.spriteA1, this);
+						hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 6, 16, 28, 10, context.spriteA1, this);
 						break;
 					case 2: // right projectile hitbox
-						hitbox = new Hitbox(25, 0, false, 10, 0, false, 15, 5, 50, 20, 5, context.spriteA2, this);
+						hitbox = new Hitbox(25, 0, false, 15, 0, false, 15, 5, 30, 20, 5, context.spriteA2, this);
 						break;
 					case 3: // left projectile hitbox
-						hitbox = new Hitbox(25, 0, false, -10, 0, false, 15, 5, 50, 20, 5, context.spriteA3, this);
+						hitbox = new Hitbox(25, 0, false, -15, 0, false, 15, 5, 30, 20, 5, context.spriteA3, this);
 						break;
 					case 4: // bomb hitbox
-						hitbox = new Hitbox(0, 25, false, 0, 10, true, 15, 5, 70, 20, 15, context.spriteA4, this);
+						hitbox = new Hitbox(0, 25, false, 0, 12, true, 15, 5, 50, 20, 15, context.spriteA4, this);
 						break;
 					case 5: // recovery
-						moveY = 24;
+						moveY = 32;
 						freefall = true;
 						break;
 				}
@@ -83,9 +86,9 @@ public class Player
 		{
 			switch (controller.direction)
 			{
-				case -1: moveX = -7; break;
+				case -1: moveX = -14; break;
 				case 0: moveX = 0; break;
-				case 1: moveX = 7; break;
+				case 1: moveX = 14; break;
 			}
 		}
 
@@ -99,18 +102,19 @@ public class Player
 		}
 
 		// fall
-		moveY -= .65f; // only affects jumping
+		moveY -= 1.5f; // only affects jumping
 
 		float vx = kbx + moveX;
 		float vy = kby + moveY;
 
 		// check for floor
 		Platform f = context.floor;
-		if (vy < 0 && f.through(x, y, radius, vy))
+		if (f.through(x, y, radius, vy))
 		{
 			moveY = 0;
 			kby = 0;
 			vy = 0;
+			y = f.y + radius;
 		}
 		
 		x += vx;
@@ -134,6 +138,7 @@ public class Player
 			kby = 0;
 			kbx = 0;
 			damage = 0;
+			lives -= 1;
 		}
 	}
 

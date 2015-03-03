@@ -104,6 +104,7 @@ public class Hitbox
 		float dx = p.x - ax;
 		float dy = p.y - ay;
 		float r = (float)Math.sqrt(dx*dx + dy*dy);
+		if (r == 0) return 0; // default is up
 		return dx / r;
 	}
 	public float trajectoryY(Player p)
@@ -111,6 +112,7 @@ public class Hitbox
 		float dx = p.x - ax;
 		float dy = p.y - ay;
 		float r = (float)Math.sqrt(dx*dx + dy*dy);
+		if (r == 0) return 1; // default is up
 		return dy / r;
 	}
 
