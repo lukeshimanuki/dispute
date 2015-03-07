@@ -11,7 +11,6 @@ public class Main
 	public static void main(String[] args) throws InterruptedException
 	{
 		Game game = new Game();
-		int x=1;
 		while (true)
 		{
 			game.update();

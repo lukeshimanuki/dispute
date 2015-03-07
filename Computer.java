@@ -6,7 +6,7 @@ public class Computer extends Controller
 {
 	private float[] weights;
 
-	private int numInput = 8;
+	private int numInput = 18;
 	private int numHidden = 32;
 	private int numOutput = 8;
 
@@ -56,18 +56,29 @@ public class Computer extends Controller
 			(float)(p.x - (f.x - f.width/2)) / f.width, // dist from left
 			(float)(p.x - (f.x + f.width/2)) / f.width, // dist from right
 			(float)(p.y - f.y) / 500, // height
+			p.kbx / 20, // knockback
+			p.kby / 20,
+			p.moveX / 20, // movement
+			p.moveY / 20, // jumping / falling
 			(float)p.damage / 100, // damage
 			// for opponent
 			(float)(o.x - (f.x - f.width/2)) / f.width, // dist from left
 			(float)(o.x - (f.x + f.width/2)) / f.width, // dist from right
 			(float)(o.y - f.y) / 500, // height
-			(float)o.damage / 100 // damage
-			};
+			o.kbx / 20, // knockback
+			o.kby / 20,
+			o.moveX / 20, // movement
+			o.moveY / 20, // jumping / falling
+			(float)o.damage / 100, // damage
+			// relative
+			(float)(p.x - o.x) / f.width, // horizontal distance from opponent
+			(float)(p.y - o.y) / 500 // vertical distance from opponent
+		};
 		float[] output = new float[numOutput]; // {right, left, jump, a1, a2, a3, a4, a5}
 		NeuralNetwork.updateNeurons(numInput, numHidden, numOutput, input, output, weights);
 		
 		// process right/left
-		if (Math.abs(output[0] - output[1]) < 0.1f) // close
+		if (Math.abs(output[0] - output[1]) < 0.0f) // close
 			direction = 0; // don't move
 		else if (output[0] > output[1]) // right > left
 			direction = 1; // move right

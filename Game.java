@@ -52,8 +52,7 @@ public class Game extends JPanel
 		players = new Player[2];
 		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE, KeyEvent.VK_M);
 		players[0] = new Player(this, keyboard1, spritePlayer);
-//		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
-//		Computer computer = new Computer((String)null);
+		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
 		Computer computer = new Computer("weights");
 		players[1] = new Player(this, computer, spritePlayer);
 		computer.set(players[1], players[0]);
@@ -67,7 +66,7 @@ public class Game extends JPanel
 
 		// set up key listener
 		addKeyListener(keyboard1);
-//		addKeyListener(keyboard2);
+		addKeyListener(keyboard2);
 		setFocusable(true);
 
 		// get origin

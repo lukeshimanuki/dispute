@@ -21,7 +21,7 @@ public class Player
 	public Hitbox hitbox = null;
 
 	public Game context;
-	private Controller controller;
+	public Controller controller;
 	private Sprite sprite;
 
 	public Player(Game context, Controller controller, Sprite sprite)

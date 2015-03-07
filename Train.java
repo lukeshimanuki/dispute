@@ -7,14 +7,14 @@ public class Train
 {
 	public static void main(String[] args) throws Exception
 	{
-//		new Train().train(null);
-		new Train().train("weights");
+		new Train().train(null);
+//		new Train().train("weights");
 	}
 
 	public void train(String weightsFilename) throws Exception
 	{
 		int popSize = 64;
-		int numInput = 8, numHidden = 32, numOutput = 8;
+		int numInput = 18, numHidden = 32, numOutput = 8;
 		int numWeights = numInput*numHidden + numHidden*numOutput;
 
 		float[][] weights = new float[popSize][numWeights];
@@ -40,7 +40,7 @@ public class Train
 		for (int generation = 1; true; generation++)
 		{
 			for (int i = 0; i < popSize; i++)
-				fitness[i] = 0;
+				fitness[i] = 1; // cuz I don't like 0
 
 			// find fitness levels (by playing each set against each other)
 			for (int i = 0; i < popSize; i++)
@@ -49,24 +49,34 @@ public class Train
 				{
 					if (i == j) continue;
 
-					Game game = new Game(new Computer(weights[i]), new Computer(weights[j]), true);
-					for (int k = 0; k < 15*90; k++) // play game for N frames
+					Game game = new Game(new Computer(weights[i]), new Computer(weights[j]), false);
+					Player p1 = game.players[0], p2 = game.players[1];
+					Platform f = game.floor;
+					int winner = 0;
+					for (int k = 0; k < 60*30; k++) // play game for N frames
 					{
 						game.update();
-						game.repaint();
-						Thread.sleep(1);
+//						game.repaint();
+//						Thread.sleep(16);
+						if (p1.y - f.y < -600) // p1 died
+						{
+							winner = 2;
+							break;
+						}
+						if (p2.y - f.y < -600) // p2 died
+						{
+							winner = 1;
+							break;
+						}
 					}
-					game.frame.dispose();
+//					game.frame.dispose();
 					// check damage, lives, etc
-					Player p1 = game.players[0], p2 = game.players[1];
-					float score1 = p1.lives * 120 - p1.damage;
-					float score2 = p2.lives * 120 - p2.damage;
-					if (score1 <= 0) score1 = 1;
-					if (score2 <= 0) score2 = 1;
-					
-					// update fitness levels
-					fitness[i] += score1 / score2;
-					fitness[j] += score2 / score1;
+					switch (winner)
+					{
+						case 0: break; // if nobody won, not aggressive enough
+						case 1: fitness[i] += 1; break;
+						case 2: fitness[j] += 1; break;
+					}
 				}
 			}
 
