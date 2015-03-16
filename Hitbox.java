@@ -20,12 +20,13 @@ public class Hitbox
 	public int state = 0;
 
 	public int damage;
+	public float kb;
 
 	private Player player;
 	private Game context;
 	private Sprite sprite;
 
-	public Hitbox(int x, int y, boolean relative, float vx, float vy, boolean fall, int r, int startup, int active, int endlag, int damage, Sprite sprite, Player player)
+	public Hitbox(int x, int y, boolean relative, float vx, float vy, boolean fall, int r, int startup, int active, int endlag, int damage, float kb, Sprite sprite, Player player)
 	{
 		this.x = x;
 		this.y = y;
@@ -40,6 +41,7 @@ public class Hitbox
 		this.endlag = endlag;
 
 		this.damage = damage;
+		this.kb = kb;
 
 		this.player = player;
 		this.context = player.context;
@@ -96,7 +98,7 @@ public class Hitbox
 
 	public boolean touching(Player p)
 	{
-		return Math.pow(ax - p.x, 2) + Math.pow(ay - p.y, 2) < Math.pow(r + Player.radius, 2);
+		return Math.pow(ax - p.x, 2) + Math.pow(ay - p.y, 2) < Math.pow(r + p.radius, 2);
 	}
 
 	public float trajectoryX(Player p)

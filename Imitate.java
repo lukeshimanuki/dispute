@@ -16,8 +16,8 @@ public class Imitate
 		int numHidden = 32;
 		int numOutput = 8;
 		int numWeights = numInput*numHidden + numHidden*numOutput;
-		int popSize = 1024;
-		int numSamples = 2048;
+		int popSize = 256;
+		int numSamples = 1024;
 
 		// initialization and read from files
 		float[][] inputSamples = new float[numSamples][numInput];
@@ -71,7 +71,7 @@ public class Imitate
 				for (int j = 0; j < numSamples; j++) // sample
 				{
 					NeuralNetwork.updateNeurons(numInput, numHidden, numOutput, inputSamples[j], output, weights[i]);
-					for (int k = 0; k < numOutput; k++)
+					for (int k = 0; k < 3; k++) // only consider move and jump
 						error += Math.abs(output[k] - outputSamples[j][k]);
 				}
 				if (error < minError)

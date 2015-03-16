@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 
 public class Player
 {
-	public static int radius = 20;
+	public int radius = 20;
 
 	public int x;
 	public int y;
@@ -11,12 +11,12 @@ public class Player
 	public float kby;
 
 	public int damage;
-	public int lives = 5;
+	public int lives = 0;
 
 	public float moveX; // voluntary movement
 	public float moveY;
 
-	private boolean freefall = false;
+	public boolean freefall = false;
 
 	public Hitbox hitbox = null;
 
@@ -24,14 +24,15 @@ public class Player
 	public Controller controller;
 	private Sprite sprite;
 
-	public Player(Game context, Controller controller, Sprite sprite)
+	public Player(Game context, Controller controller, Sprite sprite, int x, int y)
 	{
+		this.x = x;
+		this.y = y;
+
 		this.context = context;
 		this.controller = controller;
 		this.sprite = sprite;
 
-		x = 0;
-		y = 100;
 		kbx = 0;
 		kby = 0;
 		damage = 0;
@@ -61,16 +62,16 @@ public class Player
 				{
 					case 0: break;
 					case 1: // body hitbox
-						hitbox = new Hitbox(0, 0, true, 0, 0, false, 30, 6, 16, 28, 10, context.spriteA1, this);
+						hitbox = new Hitbox(0, 0, true, 0, 0, false, 60, 6, 16, 28, 20, 0.5f, context.spriteA1, this);
 						break;
 					case 2: // right projectile hitbox
-						hitbox = new Hitbox(25, 0, false, 15, 0, false, 15, 5, 30, 20, 5, context.spriteA2, this);
+						hitbox = new Hitbox(25, 0, false, 8, 0, false, 15, 8, 50, 20, 5, 0.1f, context.spriteA2, this);
 						break;
 					case 3: // left projectile hitbox
-						hitbox = new Hitbox(25, 0, false, -15, 0, false, 15, 5, 30, 20, 5, context.spriteA3, this);
+						hitbox = new Hitbox(25, 0, false, -8, 0, false, 15, 8, 50, 20, 5, 0.1f, context.spriteA3, this);
 						break;
 					case 4: // bomb hitbox
-						hitbox = new Hitbox(0, 25, false, 0, 12, true, 15, 5, 50, 20, 15, context.spriteA4, this);
+						hitbox = new Hitbox(0, 25, false, 0, 12, true, 15, 5, 50, 20, 25, 0.5f, context.spriteA4, this);
 						break;
 					case 5: // recovery
 						moveY = 32;
@@ -129,7 +130,7 @@ public class Player
 		}
 
 		// process ko
-		if (y < -800)
+		if (y < -800 || y > 1200 || x > 1200 || x < -1200)
 		{
 			x = 0;
 			y = 400;

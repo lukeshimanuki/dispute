@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 
 public class Train
 {
+	private boolean display = true;
+
 	public static void main(String[] args) throws Exception
 	{
 		new Train().train(null);
@@ -14,7 +16,7 @@ public class Train
 	public void train(String weightsFilename) throws Exception
 	{
 		int popSize = 64;
-		int numInput = 18, numHidden = 32, numOutput = 8;
+		int numInput = 96, numHidden = 64, numOutput = 4;
 		int numWeights = numInput*numHidden + numHidden*numOutput;
 
 		float[][] weights = new float[popSize][numWeights];
@@ -49,27 +51,36 @@ public class Train
 				{
 					if (i == j) continue;
 
-					Game game = new Game(new Computer(weights[i]), new Computer(weights[j]), false);
+					Computer cpu1 = new Computer(weights[i]);
+					Computer cpu2 = new Computer(weights[i]);
+					Game game = new Game(cpu1, cpu2, display);
 					Player p1 = game.players[0], p2 = game.players[1];
+					cpu1.set(p1, p2);
+					cpu2.set(p2, p1);
 					Platform f = game.floor;
 					int winner = 0;
-					for (int k = 0; k < 60*30; k++) // play game for N frames
+					for (int k = 0; k < 60*45; k++) // play game for N frames (60 fps)
 					{
 						game.update();
-//						game.repaint();
-//						Thread.sleep(16);
-						if (p1.y - f.y < -600) // p1 died
+
+						if (display)
+						{
+							game.repaint();
+							Thread.sleep(16);
+						}
+
+						if (p1.lives < 0) // p1 died
 						{
 							winner = 2;
 							break;
 						}
-						if (p2.y - f.y < -600) // p2 died
+						if (p2.lives < 0) // p2 died
 						{
 							winner = 1;
 							break;
 						}
 					}
-//					game.frame.dispose();
+					if (display) game.frame.dispose();
 					// check damage, lives, etc
 					switch (winner)
 					{

@@ -29,7 +29,8 @@ public class Game extends JPanel
 		return centerY - gameY;
 	}
 
-	public Sprite spritePlayer;
+	public Sprite spritePlayer1;
+	public Sprite spritePlayer2;
 	public Sprite spriteA1;
 	public Sprite spriteA2;
 	public Sprite spriteA3;
@@ -40,10 +41,11 @@ public class Game extends JPanel
 	public Game()
 	{
 		// load images
-		spritePlayer = new Sprite("player.png", 40, 40, 20, 20);
+		spritePlayer1 = new Sprite("player1.png", 40, 40, 20, 20);
+		spritePlayer2 = new Sprite("player2.png", 40, 40, 20, 20);
 		spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
 		spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
-		spriteA1 = new Sprite("a1.png", 60, 60, 30, 30);
+		spriteA1 = new Sprite("a1.png", 120, 120, 60, 60);
 		spriteA2 = new Sprite("a2.png", 30, 30, 15, 15);
 		spriteA3 = new Sprite("a3.png", 30, 30, 15, 15);
 		spriteA4 = new Sprite("a4.png", 30, 30, 15, 15);
@@ -51,11 +53,18 @@ public class Game extends JPanel
 		// set up players
 		players = new Player[2];
 		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE, KeyEvent.VK_M);
-		players[0] = new Player(this, keyboard1, spritePlayer);
+		Player k = new Player(this, keyboard1, spritePlayer1, -300, 100);
 		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
-		Computer computer = new Computer("weights");
-		players[1] = new Player(this, computer, spritePlayer);
-		computer.set(players[1], players[0]);
+		Player k2 = new Player(this, keyboard2, spritePlayer2, 300, 100);
+		Computer cpu = new Computer();
+		Player c = new Player(this, cpu, spritePlayer1, -300, 100);
+		Computer cpu2 = new Computer();
+		Player c2 = new Player(this, cpu2, spritePlayer2, 300, 100);
+
+		players[0] = c;
+		players[1] = c2;
+		cpu.set(players[0],players[1]);
+		cpu2.set(players[1], players[0]);
 
 		floor = new Platform(spriteStage, this);
 
@@ -74,25 +83,24 @@ public class Game extends JPanel
 		centerY = frame.getSize().height / 2;
 	}
 
-	public Game(Computer c1, Computer c2, boolean useGraphics) // for training
+	public Game(Controller c1, Controller c2, boolean useGraphics) // for training
 	{
 		if (useGraphics)
 		{
 			// load images
-			spritePlayer = new Sprite("player.png", 40, 40, 20, 20);
+			spritePlayer1 = new Sprite("player1.png", 40, 40, 20, 20);
+			spritePlayer2 = new Sprite("player2.png", 40, 40, 20, 20);
 			spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
 			spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
-			spriteA1 = new Sprite("a1.png", 60, 60, 30, 30);
+			spriteA1 = new Sprite("a1.png", 120, 120, 60, 60);
 			spriteA2 = new Sprite("a2.png", 30, 30, 15, 15);
 			spriteA3 = new Sprite("a3.png", 30, 30, 15, 15);
 			spriteA4 = new Sprite("a4.png", 30, 30, 15, 15);
 		}
 		// set up players
 		players = new Player[2];
-		players[0] = new Player(this, c1, spritePlayer);
-		players[1] = new Player(this, c2, spritePlayer);
-		c1.set(players[0], players[0]);
-		c2.set(players[1], players[0]);
+		players[0] = new Player(this, c1, spritePlayer1, -300, 100);
+		players[1] = new Player(this, c2, spritePlayer2, 300, 100);
 
 		floor = new Platform(spriteStage, this);
 
@@ -134,9 +142,8 @@ public class Game extends JPanel
 					// damage
 					player.damage += hitbox.damage;
 					// knockback (away from hitbox)
-					float knockback = 0.2f;
-					player.kbx = hitbox.trajectoryX(player) * player.damage * knockback;
-					player.kby = hitbox.trajectoryY(player) * player.damage * knockback;
+					player.kbx = hitbox.trajectoryX(player) * player.damage * hitbox.kb;
+					player.kby = hitbox.trajectoryY(player) * player.damage * hitbox.kb;
 					// turn off hitbox
 					hitbox.deactivate();
 				}
