@@ -56,9 +56,9 @@ public class Game extends JPanel
 		Player k = new Player(this, keyboard1, spritePlayer1, -300, 100);
 		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
 		Player k2 = new Player(this, keyboard2, spritePlayer2, 300, 100);
-		Computer cpu = new Computer();
+		Computer cpu = new Computer("weights");
 		Player c = new Player(this, cpu, spritePlayer1, -300, 100);
-		Computer cpu2 = new Computer();
+		Computer cpu2 = new Computer("weights2");
 		Player c2 = new Player(this, cpu2, spritePlayer2, 300, 100);
 
 		players[0] = c;

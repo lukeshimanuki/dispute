@@ -28,6 +28,8 @@ public class Computer extends Controller
 	// read weights (file contains integers from -255 to 255; convert to [-1, 1])
 	public Computer(String weightsFilename)
 	{
+		this.weights = new float[numInput*numHidden + numHidden*numOutput];
+
 		Scanner file = null;
 		try
 		{

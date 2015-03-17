@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 public class Train
 {
-	private boolean display = true;
+	private boolean display = false;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -47,7 +47,7 @@ public class Train
 			// find fitness levels (by playing each set against each other)
 			for (int i = 0; i < popSize; i++)
 			{
-				for (int j = 0; j < popSize; j++)
+				for (int j = i + 1; j < popSize; j++)
 				{
 					if (i == j) continue;
 
@@ -109,7 +109,7 @@ public class Train
 			System.out.println(generation + " " + maxFitness);
 
 			// update
-			GeneticAlgorithm.updateGenes(popSize, numWeights, weights, fitness, .8f, .01f);
+			GeneticAlgorithm.updateGenes(popSize, numWeights, weights, fitness, .7f, .001f);
 		}
 	}
 }
