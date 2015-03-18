@@ -118,6 +118,20 @@ public class Hitbox
 		return dy / r;
 	}
 
+	public void collide()
+	{
+		// if projectile (not relative position), destroy immediately
+		if (!relative)
+		{	
+			player.hitbox = null;
+		}
+		else // otherwise, display, but disable
+		{
+			kb = 0;
+			damage = 0;
+		}
+	}
+
 	public void draw(Graphics2D graphics)
 	{
 		sprite.draw(graphics, context.x(ax), context.y(ay));

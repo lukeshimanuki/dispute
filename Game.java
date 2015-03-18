@@ -29,8 +29,10 @@ public class Game extends JPanel
 		return centerY - gameY;
 	}
 
-	public Sprite spritePlayer1;
-	public Sprite spritePlayer2;
+	public Sprite spritePlayer1l;
+	public Sprite spritePlayer1r;
+	public Sprite spritePlayer2l;
+	public Sprite spritePlayer2r;
 	public Sprite spriteA1;
 	public Sprite spriteA2;
 	public Sprite spriteA3;
@@ -41,25 +43,27 @@ public class Game extends JPanel
 	public Game()
 	{
 		// load images
-		spritePlayer1 = new Sprite("player1.png", 40, 40, 20, 20);
-		spritePlayer2 = new Sprite("player2.png", 40, 40, 20, 20);
-		spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
+		spritePlayer1l = new Sprite("player1l.png", 80, 60, 40, 30);
+		spritePlayer1r = new Sprite("player1r.png", 80, 60, 40, 30);
+		spritePlayer2l = new Sprite("player2l.png", 80, 60, 40, 30);
+		spritePlayer2r = new Sprite("player2r.png", 80, 60, 40, 30);
+		spriteStage = new Sprite("stage.png", 1000, 150, 500, 0);
 		spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
-		spriteA1 = new Sprite("a1.png", 120, 120, 60, 60);
-		spriteA2 = new Sprite("a2.png", 30, 30, 15, 15);
-		spriteA3 = new Sprite("a3.png", 30, 30, 15, 15);
-		spriteA4 = new Sprite("a4.png", 30, 30, 15, 15);
+		spriteA1 = new Sprite("a1.png", 150, 150, 75, 75);
+		spriteA2 = new Sprite("a2.png", 70, 50, 35, 25);
+		spriteA3 = new Sprite("a3.png", 70, 50, 35, 25);
+		spriteA4 = new Sprite("a4.png", 50, 50, 25, 25);
 
 		// set up players
 		players = new Player[2];
 		Keyboard keyboard1 = new Keyboard(KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_PERIOD, KeyEvent.VK_COMMA, KeyEvent.VK_SPACE, KeyEvent.VK_M);
-		Player k = new Player(this, keyboard1, spritePlayer1, -300, 100);
+		Player k = new Player(this, keyboard1, spritePlayer1l, spritePlayer1r, -300, 100);
 		Keyboard keyboard2 = new Keyboard(KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_E, KeyEvent.VK_Q, KeyEvent.VK_Z, KeyEvent.VK_X);
-		Player k2 = new Player(this, keyboard2, spritePlayer2, 300, 100);
+		Player k2 = new Player(this, keyboard2, spritePlayer2l, spritePlayer2r, 300, 100);
 		Computer cpu = new Computer("weights");
-		Player c = new Player(this, cpu, spritePlayer1, -300, 100);
+		Player c = new Player(this, cpu, spritePlayer1l, spritePlayer1r, -300, 100);
 		Computer cpu2 = new Computer("weights2");
-		Player c2 = new Player(this, cpu2, spritePlayer2, 300, 100);
+		Player c2 = new Player(this, cpu2, spritePlayer2l, spritePlayer2r, 300, 100);
 
 		players[0] = c;
 		players[1] = c2;
@@ -88,8 +92,10 @@ public class Game extends JPanel
 		if (useGraphics)
 		{
 			// load images
-			spritePlayer1 = new Sprite("player1.png", 40, 40, 20, 20);
-			spritePlayer2 = new Sprite("player2.png", 40, 40, 20, 20);
+			spritePlayer1l = new Sprite("player1l.png", 40, 40, 20, 20);
+			spritePlayer1r = new Sprite("player1r.png", 40, 40, 20, 20);
+			spritePlayer2l = new Sprite("player2l.png", 40, 40, 20, 20);
+			spritePlayer2r = new Sprite("player2r.png", 40, 40, 20, 20);
 			spriteStage = new Sprite("stage.png", 800, 120, 400, 0);
 			spriteBackground = new Sprite("background.png", 1920, 1080, 960, 540);
 			spriteA1 = new Sprite("a1.png", 120, 120, 60, 60);
@@ -99,8 +105,8 @@ public class Game extends JPanel
 		}
 		// set up players
 		players = new Player[2];
-		players[0] = new Player(this, c1, spritePlayer1, -300, 100);
-		players[1] = new Player(this, c2, spritePlayer2, 300, 100);
+		players[0] = new Player(this, c1, spritePlayer1l, spritePlayer1r, -300, 100);
+		players[1] = new Player(this, c2, spritePlayer2l, spritePlayer2r, 300, 100);
 
 		floor = new Platform(spriteStage, this);
 
@@ -142,10 +148,10 @@ public class Game extends JPanel
 					// damage
 					player.damage += hitbox.damage;
 					// knockback (away from hitbox)
-					player.kbx = hitbox.trajectoryX(player) * player.damage * hitbox.kb;
-					player.kby = hitbox.trajectoryY(player) * player.damage * hitbox.kb;
-					// turn off hitbox
-					hitbox.deactivate();
+					player.kbx += hitbox.trajectoryX(player) * player.damage * hitbox.kb;
+					player.kby += hitbox.trajectoryY(player) * player.damage * hitbox.kb;
+					// disable hitbox, but still draw for some
+					hitbox.collide();
 				}
 			}
 		}

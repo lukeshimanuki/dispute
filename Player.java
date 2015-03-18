@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 
 public class Player
 {
-	public int radius = 20;
+	public int radius = 30;
 
 	public int x;
 	public int y;
@@ -16,22 +16,27 @@ public class Player
 	public float moveX; // voluntary movement
 	public float moveY;
 
+	public boolean direction = true; // true: right ; false: left
+	public int dash = 0;
+
 	public boolean freefall = false;
 
 	public Hitbox hitbox = null;
 
 	public Game context;
 	public Controller controller;
-	private Sprite sprite;
+	private Sprite spriteLeft;
+	private Sprite spriteRight;
 
-	public Player(Game context, Controller controller, Sprite sprite, int x, int y)
+	public Player(Game context, Controller controller, Sprite spritel, Sprite spriter, int x, int y)
 	{
 		this.x = x;
 		this.y = y;
 
 		this.context = context;
 		this.controller = controller;
-		this.sprite = sprite;
+		this.spriteLeft = spritel;
+		this.spriteRight = spriter;
 
 		kbx = 0;
 		kby = 0;
@@ -62,16 +67,16 @@ public class Player
 				{
 					case 0: break;
 					case 1: // body hitbox
-						hitbox = new Hitbox(0, 0, true, 0, 0, false, 60, 6, 16, 28, 20, 0.5f, context.spriteA1, this);
+						hitbox = new Hitbox(0, 0, true, 0, 0, false, 75, 6, 16, 28, 20, 0.5f, context.spriteA1, this);
 						break;
 					case 2: // right projectile hitbox
-						hitbox = new Hitbox(25, 0, false, 8, 0, false, 15, 8, 50, 20, 5, 0.1f, context.spriteA2, this);
+						hitbox = new Hitbox(25, 0, false, 8, 0, false, 35, 8, 50, 20, 5, 0.1f, context.spriteA2, this);
 						break;
 					case 3: // left projectile hitbox
-						hitbox = new Hitbox(25, 0, false, -8, 0, false, 15, 8, 50, 20, 5, 0.1f, context.spriteA3, this);
+						hitbox = new Hitbox(25, 0, false, -8, 0, false, 35, 8, 50, 20, 5, 0.1f, context.spriteA3, this);
 						break;
 					case 4: // bomb hitbox
-						hitbox = new Hitbox(0, 25, false, 0, 12, true, 15, 5, 50, 20, 25, 0.5f, context.spriteA4, this);
+						hitbox = new Hitbox(0, 25, false, 0, 12, true, 25, 5, 50, 20, 25, 0.5f, context.spriteA4, this);
 						break;
 					case 5: // recovery
 						moveY = 32;
@@ -87,11 +92,27 @@ public class Player
 		{
 			switch (controller.direction)
 			{
-				case -1: moveX = -14; break;
+				case -1:
+					if (direction == false || dash == 0)
+					{
+						moveX = -14;
+						direction = false;
+						dash = 3;
+					}
+					break;
 				case 0: moveX = 0; break;
-				case 1: moveX = 14; break;
+				case 1:
+					if (direction == true || dash == 0)
+					{
+						moveX = 14;
+						direction = true;
+						dash = 3;
+					}
 			}
 		}
+
+		// proceed with dash
+		if (dash > 0) dash--;
 
 		// decrease knockback
 		kbx *= .96f;
@@ -145,7 +166,7 @@ public class Player
 
 	public void draw(Graphics2D graphics)
 	{
-		sprite.draw(graphics, context.x(x), context.y(y));
+		(direction ? spriteRight : spriteLeft).draw(graphics, context.x(x), context.y(y));
 		if (hitbox != null && hitbox.isActive())
 			hitbox.draw(graphics);
 	}

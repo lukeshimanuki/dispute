@@ -5,7 +5,7 @@ public class Platform
 {
 	public int x = 0; // middle
 	public int y = 0; // top
-	public int width = 800;
+	public int width = 1000;
 	// flat, so no height
 
 	private Game context;

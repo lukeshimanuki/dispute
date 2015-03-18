@@ -61,9 +61,9 @@ public class Computer extends Controller
 		// attempt to keep a long distance from opponent
 		if (player.x > opponent.x) // p is to the right
 		{
-			if (player.x > opponent.x + 400) // too far
+			if (player.x > opponent.x + 500) // too far
 				direction = -1; // approach
-			else if (player.x < opponent.x + 300) // too close
+			else if (player.x < opponent.x + 400) // too close
 				direction = 1; // back off
 			else // just right
 				direction = player.moveX > 0 ? -1 : 1; // dash dance
